@@ -1,0 +1,124 @@
+---
+import LogoLg from '../assets/yultek_lg.svg';
+
+const messages = [
+  { lang: 'es', text: 'Sitio web en mantenimiento. <br>Algo sorprendente se viene.' },
+  { lang: 'en', text: 'Website under maintenance. <br>Something amazing is coming.' },
+  { lang: 'de', text: 'Website in Wartung. <br>Etwas Überraschendes kommt bald.' },
+  { lang: 'fr', text: 'Site web en maintenance. <br>Quelque chose d\'étonnant arrive.' },
+];
+const intervalTime = 4000;
+---
+<style is:global>
+  body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background: linear-gradient(135deg, #2193b0, #012367);
+    color: #f0f8ff;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    gap: 40px; 
+  }
+
+  body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15), transparent 70%),
+              radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1), transparent 70%);
+  animation: shimmer 10s infinite alternate;
+}
+@keyframes shimmer {
+  from { opacity: 0.6; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.05); }
+}
+
+  .maintenance-container {
+    text-align: center;
+    padding: 0 20px; 
+    max-width: 800px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .logo-wrapper {
+    width: 100%;         
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logo-wrapper svg {
+    width: 100%;
+    object-fit: contain;
+  }
+
+  .maintenance-message {
+    font-size: 2rem; 
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .logo-wrapper {
+      max-width: 400px;
+    }
+    
+  }
+
+  .fade-in {
+    animation: fadeIn 1s forwards;
+  }
+  .fade-out {
+    animation: fadeOut 1s forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+  }
+</style>
+
+<div class="logo-wrapper">
+  <LogoLg />
+</div>
+
+<div class="maintenance-container">
+  <p id="carousel-message" class="maintenance-message"></p>
+</div>
+
+<script define:vars={{ messages, intervalTime }} is:inline>
+  const messageElement = document.getElementById('carousel-message');
+  let currentIndex = 0;
+
+  function updateMessage() {
+    if (!messageElement) return;
+    messageElement.classList.remove('fade-in');
+    messageElement.classList.add('fade-out');
+    setTimeout(() => {
+      const currentMessage = messages[currentIndex];
+      messageElement.innerHTML = currentMessage.text; 
+      document.documentElement.lang = currentMessage.lang;
+      messageElement.classList.remove('fade-out');
+      messageElement.classList.add('fade-in');
+      currentIndex = (currentIndex + 1) % messages.length;
+    }, 1000); 
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateMessage(); 
+    setInterval(updateMessage, intervalTime);
+  });
+</script>
